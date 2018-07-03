@@ -7,10 +7,24 @@
 </head>
 
 <body>
-    <p>Hello world</p>
+    <p>Welcome to our chat</p>
+    <div class="notifications"></div>
+    <div class="users"></div>
+    <div class="input">
+        <form name="message" class="input__form">
+            <input name="messagetext" placeholder="Type your message" type="text" class="input__form__text">
+            <input type="submit" class="input__form__submitbtn">
+        </form>
+    </div>
+    <div class="messages">
+        <ol>
+            <!-- <li class='messages__item'>Text</li>-->
+        </ol>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
     <script src='/socket.io/socket.io.js'></script>
-    <script src='./js/socket.js'>
-    </script>
+    <script src='./js/socket.js'></script>
 </body>
 
 </html>

@@ -22,8 +22,8 @@ io.on('connection', (socket) => {
     //Send a message to all other logged-in users
     const newuserMessage = new Message('Admin', 'A new user has just joined');
     socket.broadcast.emit('newMessage', newuserMessage)
-    socket.on('createMessage', (message) => {
-        console.log('Creation of message', message)
+    socket.on('createMessage', (message, callback) => {
+        //console.log('Creation of message', message)
 
         //Broadcast to all user, including emitter
         // io.emit('newMessage', {
@@ -32,11 +32,16 @@ io.on('connection', (socket) => {
         //     createdAt: new Date().getTime()
         // })
         //Broadcast to all user, except emitter
-        // socket.broadcast.emit('newMessage', {
-        //     from: message.from,
-        //     text: message.text,
-        //     createdAt: new Date().getTime()
-        // })
+        socket.broadcast.emit('newMessage', {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        })
+        callback({
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
     })
     socket.on('disconnect', () => {
         console.log('User is disconnected');
