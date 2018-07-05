@@ -3,27 +3,46 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Document</title>
+    <title>Chat App</title>
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
 
-<body>
-    <p>Welcome to our chat</p>
-    <div class="notifications"></div>
-    <div class="users"></div>
-    <div class="input">
-        <form name="message" class="input__form">
-            <input name="messagetext" placeholder="Type your message" type="text" class="input__form__text">
-            <input type="submit" class="input__form__submitbtn">
-        </form>
+<body class="chat">
+    <div class="chat__sidebar">
+        <h3>People</h3>
+        <div class="users"></div>
     </div>
-    <div class="messages">
-        <ol>
+    <div class="chat__main">
+        <div class="chat__notifications"></div>
+        <ol class="chat__messages">
             <!-- <li class='messages__item'>Text</li>-->
         </ol>
+        <div class="chat__footer">
+            <form class="message__form">
+                <input name="message" class="message" placeholder="Type your message" type="text" autofocus autocomplete="off">
+                <input type="submit" class="chat__footer__form__submitbtn">
+            </form>
+            <button class="geoloc__button">Send Location</button>
+        </div>
     </div>
+
+    <script id="message-template" type="text/template">
+        <li class="message">
+            <div class="message__title">
+                <h4>{{from}}</h4>
+                <span>{{createdAt}}</span>
+            </div>
+            <div class="message__body">
+                <p>{{{text}}}</p>
+            </div>
+        </li>
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
     <script src='/socket.io/socket.io.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js'></script>
     <script src='./js/socket.js'></script>
 </body>
 

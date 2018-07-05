@@ -1,44 +1,74 @@
 const elements = {
-    messageForm: $('.input__form'),
-    messageText: $('.input__form__text'),
-    messagesList: $('.messages ol'),
-    notificationsList: $('.notifications')
+    messageForm: $('.message__form'),
+    messageText: $('.message'),
+    messagesList: $('.chat__messages'),
+    notificationsList: $('.chat__notifications'),
+    geolocButton: $('.geoloc__button'),
+    messageTemplate: $('#message-template')
 };
 
+//Abstract Notification & Message
+
+const Message = function (res) {
+    const template = elements.messageTemplate.html();
+    const html = Mustache.render(template, {
+        text: res.text,
+        from: res.from,
+        createdAt: moment(res.createdAt).format('h:mm a')
+
+    });
+    return elements.messagesList.append(html);
+}
+
+const Notification = function (text, type) {
+    elements.notificationsList.html('').removeClass().addClass('chat__notifications');
+    elements.notificationsList.addClass('chat__notifications--' + type);
+    return elements.notificationsList.text(text);
+}
+
+//Socket
 const socket = io();
 socket.on('connect', function () {
-    console.log('Connected to server');
+    Notification(`Hello ${socket.id}, you are now connected to the chat`, 'success');
 });
 
 socket.on('newMessage', function (res) {
-    console.log('New message: ', message);
-    let li = $('<li class="messages__item"></li>');
-    li.text(`From: ${res.from} - Message: ${res.text} - At ${res.createdAt}`);
-    elements.messagesList.append(li);
-    elements.messageText.val('');
+    Message(res);
 });
 
 socket.on('disconnect', function () {
-    console.log('I am disconnected');
+    Notification('You are now disconnected', 'error');
 });
 
-const emitCreatemessage = function (e) {
+//UX Listener
+elements.messageForm.on('submit', function (e) {
     e.preventDefault();
-    elements.notificationsList.html('');
     if (elements.messageText.val() !== '') {
         const text = elements.messageText.val();
         socket.emit('createMessage', {
             from: 'Andrew',
             text,
         }, function (res) {
-            console.log(res)
+            //Notification(`Message has been created: ${res.text}`, 'success');
         });
     } else {
-        let span = $('<span style="color:red"></span>');
-        span.text('Merci de rentrer un message!');
-        elements.notificationsList.append(span);
+        Notification('Merci de rentrer un message!', 'error');
     }
-}
+});
 
-//UX Listener
-elements.messageForm.on('submit', emitCreatemessage);
+elements.geolocButton.on('click', function (e) {
+    if (!navigator.geolocation) {
+        return Notification('You cannot use geolocation with your browser!', 'error');
+    }
+    elements.geolocButton.attr('disabled', 'disabled');
+    navigator.geolocation.getCurrentPosition(function (position) {
+        elements.geolocButton.removeAttr('disabled');
+        const url = `https://maps.google.com?q=${position.coords.latitude},${position.coords.longitude}`;
+        socket.emit('createGeoLocMessage', {
+            from: 'Andrew',
+            link: `<a href="${url}" target="blank" class ="user__link">This is my current position</a>`,
+        }, function (res) {
+            Notification(`Message has been created: Position Link`, 'success');
+        });
+    });
+});

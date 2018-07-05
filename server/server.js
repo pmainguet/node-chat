@@ -1,11 +1,11 @@
 const express = require("express");
 const path = require("path");
-const socketIO = require('socket.io');
-const http = require('http');
+const socketIO = require("socket.io");
+const http = require("http");
 
 const {
     Message
-} = require('./models/message.js');
+} = require("./models/message.js");
 
 const port = process.env.PORT || 3000;
 const publicPath = path.join(__dirname, "../public");
@@ -14,37 +14,44 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 
-io.on('connection', (socket) => {
-    console.log('User is connected');
-    //Send a message to the logged-in user
-    const welcomeMessage = new Message('Admin', 'Welcome to our chat app');
-    socket.emit('newMessage', welcomeMessage);
-    //Send a message to all other logged-in users
-    const newuserMessage = new Message('Admin', 'A new user has just joined');
-    socket.broadcast.emit('newMessage', newuserMessage)
-    socket.on('createMessage', (message, callback) => {
-        //console.log('Creation of message', message)
+io.on("connection", socket => {
+    console.log(`User with id ${socket.id} is connected`);
 
-        //Broadcast to all user, including emitter
-        // io.emit('newMessage', {
-        //     from: message.from,
-        //     text: message.text,
-        //     createdAt: new Date().getTime()
-        // })
+    //LOGIN MESSAGES
+
+    //Send a message to the logged-in user
+    const welcomeMessage = new Message("Admin", "Welcome to our chat app");
+    socket.emit("newMessage", welcomeMessage);
+
+    //Send a message to all other logged-in users
+    const newuserMessage = new Message(
+        "Admin",
+        `User ${socket.id} has just joined`
+    );
+    socket.broadcast.emit("newMessage", newuserMessage);
+
+    //CREATE MESSAGES
+
+    socket.on("createMessage", (message, callback) => {
         //Broadcast to all user, except emitter
-        socket.broadcast.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
-        callback({
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
-    })
-    socket.on('disconnect', () => {
-        console.log('User is disconnected');
+        const newMessage = new Message(message.from, message.text);
+        io.emit("newMessage", newMessage);
+        callback(newMessage);
+    });
+
+    socket.on("createGeoLocMessage", (message, callback) => {
+        const newGeolocmessage = new Message(message.from, message.link);
+        io.emit("newMessage", newGeolocmessage);
+        callback(newGeolocmessage);
+    });
+
+    //DISCONNECT MESSAGE
+
+    socket.on("disconnect", () => {
+        const text = `User with id ${socket.id} is gone`;
+        console.log(text);
+        const disconnectMessage = new Message("Admin", text);
+        socket.broadcast.emit("newMessage", disconnectMessage);
     });
 });
 
