@@ -20,7 +20,7 @@ io.on("connection", socket => {
     //LOGIN MESSAGES
 
     //Send a message to the logged-in user
-    const welcomeMessage = new Message("Admin", "Welcome to our chat app");
+    const welcomeMessage = new Message("Admin", "Welcomee to our chat app");
     socket.emit("newMessage", welcomeMessage);
 
     //Send a message to all other logged-in users
