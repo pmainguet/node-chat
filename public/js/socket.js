@@ -85,9 +85,7 @@ elements.messageForm.on('submit', function (e) {
             from: params.name,
             text,
         }, function (err) {
-            if (err) {
-                Notification('Merci de rentrer un message!', 'error');
-            }
+
         });
     } else {
         Notification('Merci de rentrer un message!', 'error');
@@ -106,10 +104,6 @@ elements.geolocButton.on('click', function (e) {
         socket.emit('createGeoLocMessage', {
             from: params.name,
             link: `<a href="${url}" target="blank" class ="user__link">This is my current position</a>`,
-        }, function (err) {
-            if (err) {
-                Notification('Merci de rentrer un message!', 'error');
-            }
-        });
+        }, function (err) {});
     });
 });
