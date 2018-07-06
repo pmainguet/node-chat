@@ -2,6 +2,8 @@
 
 Simple Chat with NodeJS
 
+Test node on Heroku: https://rocky-wave-29658.herokuapp.com
+
 - Built on NodeJS / Express / Socket.IO
 - Join Page + Chat Page
 - Room feature
